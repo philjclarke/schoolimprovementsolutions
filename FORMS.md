@@ -30,6 +30,7 @@ kept in the handler but needs no configuration unless the campaign launches.
 | `FORM_TO` | Comma-separated notification recipients |
 | `ZAPIER_HOOK_MP_SEND` | Optional — catch-hook URL for the MP form (unused campaign) |
 | `ZAPIER_HOOK_SPREAD_WORD` | Optional — catch-hook URL for the spread-the-word form (unused campaign) |
+| `GOOGLE_MAPS_API_KEY` | Key for the contact page map, served via `api/maps-key.js` (webflow.js is patched to read `window.GOOGLE_MAPS_API_KEY`). A Maps JS key is public by nature — restrict it to the site's domains in Google Cloud Console |
 
 Only the first three are needed for the live site. A form with no delivery
 configured returns an error to the visitor.
