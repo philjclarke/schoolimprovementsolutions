@@ -1,0 +1,29 @@
+name: Deploy to Azure App Service
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install production dependencies
+        run: npm ci --omit=dev
+
+      - name: Remove files that should not be deployed
+        run: rm -rf _reference FORMS.md vercel.json .vercelignore
+
+      - name: Deploy
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: catalystmarketing
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: .
