@@ -24,6 +24,17 @@ app.get('/api/maps-key', mapsKeyHandler);
 const blocked = /^\/(api(\/|$)|node_modules(\/|$)|_reference(\/|$)|server\.js$|package(-lock)?\.json$|FORMS\.md$|vercel\.json$|\.)/i;
 app.use((req, res, next) => (blocked.test(req.path) ? notFound(req, res) : next()));
 
+// Redirect direct .html requests to the extensionless form (like Vercel's
+// cleanUrls), preserving any query string. /index.html collapses to /.
+app.use((req, res, next) => {
+  if (req.method !== 'GET' && req.method !== 'HEAD') return next();
+  const m = req.path.match(/^(.*)\.html$/i);
+  if (!m) return next();
+  const clean = m[1].replace(/(^|\/)index$/i, '$1') || '/';
+  const query = req.originalUrl.includes('?') ? req.originalUrl.slice(req.originalUrl.indexOf('?')) : '';
+  res.redirect(301, clean + query);
+});
+
 // Static site; `extensions` maps /contact-us -> contact-us.html etc.
 app.use(express.static(root, { extensions: ['html'] }));
 
